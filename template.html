@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JavaScript - A-Frame School</title>
+    <meta name="description" content="JavaScript - A-Frame School">
+    <script src="https://aframe.io/releases/0.6.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-template-component@3.x.x/dist/aframe-template-component.min.js"></script>
+  <!-- <script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script> -->
+    
+  </head>
+  
+  <script>
+  var raycaster = new THREE.Raycaster();
+  
+  AFRAME.registerComponent('floor-cycle', {
+    init: function() {
+      var sceneEl = document.querySelector('a-scene');
+      var floorEl = sceneEl.querySelector('#clickHandle');
+      var entity = sceneEl.querySelector('#entity');
+      
+      var canvas = document.querySelector('canvas');
+      
+      canvas.addEventListener( 'click', function (event) {
+
+        var mouse = new THREE.Vector2();
+
+        var rect = canvas.getBoundingClientRect();
+
+        mouse.x = ( (event.clientX - rect.left) / rect.width ) * 2 - 1;
+        mouse.y = - ( (event.clientY - rect.top) / rect.height ) * 2 + 1;
+
+        raycaster.setFromCamera( mouse, sceneEl.camera );
+        
+        var intersected = raycaster.intersectObject( floorEl.object3D.children[0] );   // 获取射线和地球的相交点
+        
+        if ( intersected && intersected.length > 0 ) {
+          
+          floorEl.setAttribute('scale', '2 2 2');
+          
+          entity.setAttribute('template', 'src', '#sphereTemplate')
+          
+        }
+        
+      }, false);
+
+    }
+  });
+  
+  
+
+</script>
+
+<body>
+  <a-scene floor-cycle>
+    
+    <a-assets>
+      <script id="boxesTemplate" type="text/html">
+        <a-box id="clickHandle" color="red" position="-1 0 -5"></a-box>
+        <a-box color="green" position="0 1 -5"></a-box>
+        <a-box color="blue" position="1 0 -5"></a-box>
+      </script>
+      <script id="sphereTemplate" type="text/html">
+        <a-sphere id="clickHandle1" color="red" position="-1 0 -5"></a-box>
+        <a-sphere color="green" position="0 1 -5"></a-box>
+        <a-sphere color="blue" position="1 0 -5"></a-box>
+      </script>
+    </a-assets>
+    
+    <a-entity id="entity" template="src: #boxesTemplate"
+            data-box1color="red" data-box2color="green" data-box3color="blue"></a-entity>
+    <!--
+    <a-entity>
+      <a-box id="walls" position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
+    </a-entity>
+    <a-sphere id="floor" position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
+    <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
+    <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
+    <!-- <a-sky color="#ECECEC"></a-sky> --
+    <a-sky src="https://aframe.io/aframe/examples/boilerplate/panorama/puydesancy.jpg" rotation="0 -130 0"></a-sky>
+    <a-entity position="0 1.6 0" camera look-controls></a-entity>
+    -->
+  </a-scene>
+</body>
+    
+</html>

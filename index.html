@@ -1,0 +1,109 @@
+<!DOCTYyutPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>JavaScript - A-Frame School</title>
+    <meta name="description" content="JavaScript - A-Frame School">
+    <script src="./aframe/aframe.min.js"></script>
+    <script src="./aframe/aframe-template-component.min.js"></script>
+    <script src="./aframe/aframe-event-set-component.min.js"></script>
+    <script src="./aframe/aframe-mouse-cursor-component.min.js"></script>
+
+</head>
+
+<body>
+
+<!--
+
+1. 第一步：创建各个场景模板
+
+引入模板相关的插件 aframe-template-component
+
+创建场景。
+
+2. 添加鼠标点击以及设置事件插件
+
+引入相关插件 aframe-mouse-cursor-component，
+aframe-event-set-component。
+
+这里有两种设置事件的方式，一种是注册组件set-entity，一种是使用插件aframe-event-set-component，通过设置event-set__click来实现。
+
+-->
+
+<script>
+
+    AFRAME.registerComponent('set-entity', {
+        schema: {
+            on: {type: 'string'},
+            target: {type: 'selector'},
+            tpl: {type: 'string'}
+        },
+
+        init: function () {
+            var data = this.data;
+            var el = this.el;
+
+            // this.setupFadeAnimation();
+
+            el.addEventListener(data.on, function () {
+                data.target.setAttribute('template', 'src', data.tpl);
+            });
+        },
+
+        /**
+         * Setup fade-in + fade-out.
+
+        setupFadeAnimation: function () {
+            var data = this.data;
+            var targetEl = this.data.target;
+
+            // Only set up once.
+            if (targetEl.dataset.setImageFadeSetup) { return; }
+            targetEl.dataset.setImageFadeSetup = true;
+
+            // Create animation.
+            targetEl.setAttribute('animation__fade', {
+                property: 'material.color',
+                startEvents: 'set-image-fade',
+                dir: 'alternate',
+                dur: data.dur,
+                from: '#FFF',
+                to: '#000'
+            });
+        }
+        */
+    });
+
+</script>
+
+<a-scene>
+
+    <a-assets>
+        <script id="tpl1" type="text/html">
+            <a-sky src="./assets/img/01.jpg"></a-sky>
+            <a-box class="clickHandle" color="red" position="-1 0 -5"
+                   set-entity="on: click; target: #entity; tpl: #tpl2"></a-box>
+        </script>
+        <script id="tpl2" type="text/html">
+            <a-sky src="./assets/img/02.jpg"></a-sky>
+            <a-sphere class="clickHandle" color="red" position="-1 5 -10"
+                   event-set__click="_event: click; _target: #entity; template.src: #tpl3"></a-sphere>
+        </script>
+        <script id="tpl3" type="text/html">
+            <a-sky src="./assets/img/03.jpg"></a-sky>
+            <a-cylinder class="clickHandle" color="red" position="5 0 -5"
+                      set-entity="on: click; target: #entity; tpl: #tpl1"></a-cylinder>
+        </script>
+    </a-assets>
+
+    <!--容器-->
+    <a-entity id="entity" template="src: #tpl1"></a-entity>
+
+    <!--光标-->
+    <a-camera mouse-cursor></a-camera>
+
+</a-scene>
+
+</body>
+
+</html>

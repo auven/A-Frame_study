@@ -1,0 +1,60 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width">
+    <title>监听是否是在vr模式下，切换不同的视图</title>
+    <script src="https://aframe.io/releases/0.6.1/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@3.0.x/dist/aframe-event-set-component.min.js"></script>
+    <script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
+  </head>
+  <body>
+    
+    <script>
+      AFRAME.registerComponent('scenelistener',{
+         init:function(){
+            let vrcam = document.querySelector("#cam-vr");
+            let dcam = document.querySelector("#cam-desktop");
+            let cursor = document.querySelector('[cursor]');
+            console.clear();
+            console.log('init');
+            console.log('vrcam:');
+            console.log(vrcam);
+            console.log('dcam:');
+            console.log(dcam);
+            console.log('cursor:');
+            console.log(cursor);
+            this.el.sceneEl.addEventListener('enter-vr',function(){
+                     cursor.setAttribute('visible',true);
+                     dcam.setAttribute('camera','active',false);
+                     vrcam.setAttribute('camera','active',true);
+            });
+            this.el.sceneEl.addEventListener('exit-vr',function(){
+                     cursor.setAttribute('visible',false);
+                     dcam.setAttribute('camera','active',true);
+                     vrcam.setAttribute('camera','active',false);
+            });
+        }
+      });
+    </script>
+    
+    <a-scene scenelistener>
+      <a-box position="0 0 -2">
+
+      </a-box>
+      <a-sky color="green"></a-sky>
+        <a-entity position="0 0 5" id="cam-desktop" camera="userHeight: 1.6; zoom:1;active:true" look-controls wasd-controls mouse-cursor>
+      </a-entity>
+
+
+      <a-entity id="cam-vr" camera="userHeight: 1.6; zoom:1;active:false " look-controls>
+          <a-animation begin="cursor-fusing" delay=" 3000" attribute="camera.zoom" from="1" to="4" dur="1000"></a-animation>
+        <a-animation begin="click" delay="500" attribute="camera.zoom" from="4" to="1" dur="1000"></a-animation>
+          <a-entity visible="false" cursor="fuse: true; fuseTimeout:4000" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03; thetaLength: 360; thetaStart: 0" rotation="0 0 90" position="0 0 -1" material="color: black; side: double; shader: flat">
+          <a-animation begin="cursor-fusing" attribute="geometry.thetaLength" from="360" to="0" easing="linear" dur="3000"></a-animation>
+          <a-animation begin="mouseleave" attribute="geometry.thetaLength" from="360" to="360" dur="0"></a-animation>
+          </a-entity>
+      </a-entity>
+    </a-scene>
+    
+  </body>
+</html>
