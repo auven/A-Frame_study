@@ -28,6 +28,8 @@ aframe-event-set-component。
 
 这里有两种设置事件的方式，一种是注册组件set-entity，一种是使用插件aframe-event-set-component，通过设置event-set__click来实现。
 
+3. 显示与隐藏光标
+
 -->
 
 <script>
@@ -76,7 +78,25 @@ aframe-event-set-component。
 
 </script>
 
-<a-scene>
+<script>
+    // 监听是否进入vr模式，只有进入vr模式，才添加光标
+    AFRAME.registerComponent('scenelistener',{
+        init:function(){
+            var cursorWrap = document.querySelector('#cursorWrap');
+            var cursor = document.createElement('a-cursor');
+            cursor.setAttribute('color', 'yellow');
+            this.el.sceneEl.addEventListener('enter-vr',function(){
+                cursorWrap.appendChild(cursor);
+            });
+            this.el.sceneEl.addEventListener('exit-vr',function(){
+                cursorWrap.removeChild(cursor);
+            });
+        }
+    });
+</script>
+
+
+<a-scene scenelistener>
 
     <a-assets>
         <script id="tpl1" type="text/html">
@@ -100,7 +120,7 @@ aframe-event-set-component。
     <a-entity id="entity" template="src: #tpl1"></a-entity>
 
     <!--光标-->
-    <a-camera mouse-cursor></a-camera>
+    <a-camera id="cursorWrap" mouse-cursor></a-camera>
 
 </a-scene>
 
